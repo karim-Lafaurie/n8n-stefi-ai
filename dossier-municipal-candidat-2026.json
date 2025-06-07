@@ -1,0 +1,615 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "prompt_actualite",
+              "name": "prompt_actualite",
+              "type": "string",
+              "value": "Fournit une analyse complète de l'actualité récente de la ville de {{ $json.ville_nom }} en France. Inclut les derniers événements, projets municipaux, développements économiques, problèmes sociaux et décisions du conseil municipal. Concentre-toi sur les informations des 12 derniers mois qui pourraient impacter une campagne électorale municipale."
+            },
+            {
+              "id": "prompt_finances",
+              "name": "prompt_finances",
+              "type": "string",
+              "value": "Analyse en détail la situation financière de la commune de {{ $json.ville_nom }} en France. Inclut le budget municipal, les dépenses principales, les recettes, l'endettement, les investissements récents, les projets financés et les perspectives budgétaires. Concentre-toi sur les données financières publiques disponibles."
+            },
+            {
+              "id": "prompt_juridique",
+              "name": "prompt_juridique",
+              "type": "string",
+              "value": "Fournis les informations juridiques et réglementaires importantes concernant {{ $json.ville_nom }} en France. Inclut les délibérations municipales récentes, les contentieux en cours, les décisions administratives importantes, les projets d'urbanisme, les réglementations locales et tout aspect juridique pertinent pour la gouvernance municipale."
+            },
+            {
+              "id": "prompt_socio_economique",
+              "name": "prompt_socio_economique",
+              "type": "string",
+              "value": "Analyse la situation socio-économique de {{ $json.ville_nom }} en France. Inclut les données démographiques, le taux de chômage, les entreprises locales, les commerces, l'immobilier, l'éducation, la santé, les transports, la culture et les équipements publics. Concentre-toi sur les défis et opportunités pour le développement local."
+            },
+            {
+              "id": "prompt_synthese",
+              "name": "prompt_synthese",
+              "type": "string",
+              "value": "Créé un dossier municipal complet pour un candidat aux élections municipales 2026 de {{ $json.ville_nom }}. Synthétise les informations d'actualité, financières, juridiques et socio-économiques. Structure le contenu avec des sections claires : Présentation de la commune, Enjeux principaux, Défis à relever, Opportunités de développement, et Recommandations stratégiques pour la campagne."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7ed7aabe-5cfd-4234-b3a7-31bd81954b4a",
+      "name": "🔧 Configuration des Prompts",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1260,
+        -480
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "path": "dossier-municipal",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "dcde8da6-361e-4141-a2b9-24320a4ee65f",
+      "name": "📥 Webhook Entrée",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -1480,
+        -480
+      ],
+      "webhookId": "dossier-municipal-2026",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ville_nom",
+              "name": "ville_nom",
+              "type": "string",
+              "value": "={{ $('📥 Webhook Entrée').item.json.query?.ville || $('📥 Webhook Entrée').item.json.ville || $('📥 Webhook Entrée').item.json.query?.topic || $('📥 Webhook Entrée').item.json.topic || '' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dd50cb56-717b-4059-82c3-ff6276f14320",
+      "name": "🏛️ Extraction Nom Ville",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1040,
+        -480
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "ville-existe",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8011c0d7-792f-4730-9f27-c737412e125a",
+      "name": "✅ Vérification Ville",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        -820,
+        -480
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es un expert en analyse municipale française. Réponds en français avec des informations précises et vérifiables.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Fournit une analyse complète de l'actualité récente de la ville de {{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }} en France. Inclut les derniers événements, projets municipaux, développements économiques, problèmes sociaux et décisions du conseil municipal. Concentre-toi sur les informations des 12 derniers mois qui pourraient impacter une campagne électorale municipale.\"\n    }\n  ],\n  \"max_tokens\": 4000,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\"franceinfo.fr\", \"lemonde.fr\", \"ouest-france.fr\", \"lagazettedescommunes.com\"],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"month\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "id": "1382c9b1-a5e5-4487-9529-abcf65000de1",
+      "name": "📰 Agent Actualité",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -600,
+        -720
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "b1QqaUzz6qEJNMua",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es un expert en finances publiques françaises. Réponds en français avec des données financières précises.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyse en détail la situation financière de la commune de {{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }} en France. Inclut le budget municipal, les dépenses principales, les recettes, l'endettement, les investissements récents, les projets financés et les perspectives budgétaires. Concentre-toi sur les données financières publiques disponibles.\"\n    }\n  ],\n  \"max_tokens\": 4000,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\"collectivites-locales.gouv.fr\", \"data.gouv.fr\", \"insee.fr\"],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"year\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "id": "facf9a81-3d2f-4d06-a99c-8ee80d390bf5",
+      "name": "💰 Agent Finances",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -600,
+        -520
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "b1QqaUzz6qEJNMua",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es un expert en droit administratif et municipal français. Réponds en français avec des informations juridiques précises.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Fournis les informations juridiques et réglementaires importantes concernant {{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }} en France. Inclut les délibérations municipales récentes, les contentieux en cours, les décisions administratives importantes, les projets d'urbanisme, les réglementations locales et tout aspect juridique pertinent pour la gouvernance municipale.\"\n    }\n  ],\n  \"max_tokens\": 4000,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\"legifrance.gouv.fr\", \"service-public.fr\", \"cnil.fr\"],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"year\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "id": "fe098d7e-4b47-4bd2-9e74-2665a612105a",
+      "name": "⚖️ Agent Juridique",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -600,
+        -360
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "b1QqaUzz6qEJNMua",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.1-sonar-small-128k-online\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es un expert en développement territorial et socio-économie française. Réponds en français avec des analyses précises.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyse la situation socio-économique de {{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }} en France. Inclut les données démographiques, le taux de chômage, les entreprises locales, les commerces, l'immobilier, l'éducation, la santé, les transports, la culture et les équipements publics. Concentre-toi sur les défis et opportunités pour le développement local.\"\n    }\n  ],\n  \"max_tokens\": 4000,\n  \"temperature\": 0.2,\n  \"top_p\": 0.9,\n  \"return_citations\": true,\n  \"search_domain_filter\": [\"insee.fr\", \"pole-emploi.fr\", \"data.gouv.fr\"],\n  \"return_images\": false,\n  \"return_related_questions\": false,\n  \"search_recency_filter\": \"year\",\n  \"top_k\": 0,\n  \"stream\": false,\n  \"presence_penalty\": 0,\n  \"frequency_penalty\": 1\n}",
+        "options": {}
+      },
+      "id": "8259161d-31cc-4938-a0b7-3fdd45aeec81",
+      "name": "🏘️ Agent Socio-Économique",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -600,
+        -160
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "b1QqaUzz6qEJNMua",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "actualite",
+              "name": "actualite",
+              "type": "string",
+              "value": "={{ $('📰 Agent Actualité').item.json.choices[0].message.content }}"
+            },
+            {
+              "id": "finances",
+              "name": "finances",
+              "type": "string",
+              "value": "={{ $('💰 Agent Finances').item.json.choices[0].message.content }}"
+            },
+            {
+              "id": "juridique",
+              "name": "juridique",
+              "type": "string",
+              "value": "={{ $('⚖️ Agent Juridique').item.json.choices[0].message.content }}"
+            },
+            {
+              "id": "socio_economique",
+              "name": "socio_economique",
+              "type": "string",
+              "value": "={{ $('🏘️ Agent Socio-Économique').item.json.choices[0].message.content }}"
+            },
+            {
+              "id": "ville",
+              "name": "ville",
+              "type": "string",
+              "value": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fa11f0d4-1952-498c-ba7e-bbcacc267ac1",
+      "name": "📊 Consolidation Données",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -260,
+        -420
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "options": {
+          "responseFormat": "json_object",
+          "temperature": 0.1
+        }
+      },
+      "id": "07c23a83-c782-4de9-b639-733f3f61d5b6",
+      "name": "🤖 GPT Synthèse",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        20,
+        -160
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "x5omHDQyKcMdm5sj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('🔧 Configuration des Prompts').item.json.prompt_synthese.replace('{{ $json.ville_nom }}', $json.ville) }}\n\n## Données collectées :\n\n### Actualité :\n{{ $json.actualite }}\n\n### Finances :\n{{ $json.finances }}\n\n### Juridique :\n{{ $json.juridique }}\n\n### Socio-économique :\n{{ $json.socio_economique }}\n\n---\n\nCrée un dossier municipal structuré en format JSON avec cette structure exacte :\n\n{\n  \"dossier\": {\n    \"ville\": \"nom de la ville\",\n    \"date_creation\": \"date actuelle\",\n    \"resume_executif\": \"résumé en 2-3 phrases\",\n    \"sections\": {\n      \"presentation_commune\": {\n        \"titre\": \"Présentation de la commune\",\n        \"contenu\": \"description détaillée\",\n        \"points_cles\": [\"point1\", \"point2\", \"point3\"]\n      },\n      \"enjeux_principaux\": {\n        \"titre\": \"Enjeux principaux\",\n        \"contenu\": \"analyse des enjeux\",\n        \"points_cles\": [\"enjeu1\", \"enjeu2\", \"enjeu3\"]\n      },\n      \"defis_relever\": {\n        \"titre\": \"Défis à relever\",\n        \"contenu\": \"identification des défis\",\n        \"points_cles\": [\"defi1\", \"defi2\", \"defi3\"]\n      },\n      \"opportunites\": {\n        \"titre\": \"Opportunités de développement\",\n        \"contenu\": \"analyse des opportunités\",\n        \"points_cles\": [\"opportunite1\", \"opportunite2\", \"opportunite3\"]\n      },\n      \"recommandations\": {\n        \"titre\": \"Recommandations stratégiques\",\n        \"contenu\": \"stratégies pour la campagne\",\n        \"points_cles\": [\"recommandation1\", \"recommandation2\", \"recommandation3\"]\n      }\n    },\n    \"sources\": [\"source1\", \"source2\", \"source3\"]\n  }\n}\n\nRéponds uniquement avec le JSON, sans texte d'explication."
+      },
+      "id": "b4a1da38-40cb-4b09-9cda-f43c57605bb5",
+      "name": "📋 Création Dossier Municipal",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        20,
+        -420
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "options": {
+          "responseFormat": "text",
+          "temperature": 0.1
+        }
+      },
+      "id": "253ff56e-b04d-4988-8144-3f7275b138e5",
+      "name": "🌐 GPT HTML",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        360,
+        -160
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "openAiApi": {
+          "id": "x5omHDQyKcMdm5sj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Crée un document HTML complet et moderne pour ce dossier municipal. Utilise TailwindCSS pour un design professionnel et responsive.\n\nStructure :\n- Header avec le nom de la ville et date\n- Navigation par sections\n- Contenu organisé avec des cartes TailwindCSS\n- Code couleur : bleu pour les titres, vert pour les opportunités, orange pour les défis\n- Footer avec les sources\n\nDonnées du dossier :\n{{ $json.text }}\n\nRequirements :\n- Document HTML complet avec doctype\n- Utilise TailwindCSS via CDN\n- Design responsive et moderne\n- Navigation fluide entre sections\n- Formatage professionnel pour un candidat\n- Langue française exclusivement\n- Une seule ligne de HTML (sans retours à la ligne)\n\nRéponds uniquement avec le code HTML, sans explications."
+      },
+      "id": "74f98790-e3d9-480b-8987-565b3d47c1f0",
+      "name": "🎨 Génération HTML",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        360,
+        -420
+      ],
+      "typeVersion": 1.4
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.text }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "id": "08911005-b6cd-4842-a7c5-db2b77aa8a90",
+      "name": "📤 Réponse Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        780,
+        -420
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "erreur",
+              "name": "erreur",
+              "type": "string",
+              "value": "Erreur : Nom de ville manquant. Veuillez spécifier le paramètre 'ville' ou 'topic' dans votre requête. Exemples: ?ville=Paris ou ?topic=Lyon"
+            },
+            {
+              "id": "debug_data",
+              "name": "debug_data",
+              "type": "object",
+              "value": "={{ $('📥 Webhook Entrée').item.json }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0ff99791-3907-4a36-8281-fb24c3c4e5db",
+      "name": "❌ Erreur Ville Manquante",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -820,
+        -300
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"erreur\": $json.erreur, \"debug\": $json.debug_data, \"aide\": \"Utilisez les paramètres: ?ville=NomVille ou ?topic=NomVille\" } }}",
+        "options": {}
+      },
+      "id": "9f4d1924-0451-4002-936f-df287c039a8b",
+      "name": "📤 Réponse Erreur",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "position": [
+        -620,
+        60
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## 🏛️ WORKFLOW DOSSIER MUNICIPAL 2026\n\nCe workflow génère un dossier complet pour un candidat aux élections municipales.\n\n### Utilisation :\n- URL : /dossier-municipal?ville=NOM_VILLE\n- Exemple : /dossier-municipal?ville=Lyon\n\n### Variables configurables :\nTous les prompts sont centralisés dans le nœud '🔧 Configuration des Prompts'\n\n### Agents spécialisés :\n- 📰 Actualité municipale\n- 💰 Finances publiques\n- ⚖️ Aspects juridiques\n- 🏘️ Socio-économique",
+        "height": 400,
+        "width": 600,
+        "color": 3
+      },
+      "id": "31b5e139-d05a-4c83-8889-6e42eb3f692f",
+      "name": "📖 Documentation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1480,
+        -860
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "🔧 Configuration des Prompts": {
+      "main": [
+        [
+          {
+            "node": "✅ Vérification Ville",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📥 Webhook Entrée": {
+      "main": [
+        [
+          {
+            "node": "🏛️ Extraction Nom Ville",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🏛️ Extraction Nom Ville": {
+      "main": [
+        [
+          {
+            "node": "🔧 Configuration des Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "✅ Vérification Ville": {
+      "main": [
+        [
+          {
+            "node": "📰 Agent Actualité",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "💰 Agent Finances",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "⚖️ Agent Juridique",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "🏘️ Agent Socio-Économique",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "❌ Erreur Ville Manquante",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📰 Agent Actualité": {
+      "main": [
+        [
+          {
+            "node": "📊 Consolidation Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "💰 Agent Finances": {
+      "main": [
+        [
+          {
+            "node": "📊 Consolidation Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚖️ Agent Juridique": {
+      "main": [
+        [
+          {
+            "node": "📊 Consolidation Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🏘️ Agent Socio-Économique": {
+      "main": [
+        [
+          {
+            "node": "📊 Consolidation Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📊 Consolidation Données": {
+      "main": [
+        [
+          {
+            "node": "📋 Création Dossier Municipal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🤖 GPT Synthèse": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "📋 Création Dossier Municipal",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📋 Création Dossier Municipal": {
+      "main": [
+        [
+          {
+            "node": "🎨 Génération HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🌐 GPT HTML": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🎨 Génération HTML",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🎨 Génération HTML": {
+      "main": [
+        [
+          {
+            "node": "📤 Réponse Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "❌ Erreur Ville Manquante": {
+      "main": [
+        [
+          {
+            "node": "📤 Réponse Erreur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "a89ff51014f84c47ef4d4895b220e462755d019d580bee747c11ae9b6bc115eb"
+  }
+}
