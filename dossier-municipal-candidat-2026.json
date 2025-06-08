@@ -232,25 +232,25 @@
               "id": "actualite",
               "name": "actualite",
               "type": "string",
-              "value": "={{ $('📰 Agent Actualité').item.json.choices[0].message.content }}"
+              "value": "={{ $('📰 Agent Actualité').item?.json?.choices?.[0]?.message?.content || 'Données d\\'actualité non disponibles' }}"
             },
             {
               "id": "finances",
               "name": "finances",
               "type": "string",
-              "value": "={{ $('💰 Agent Finances').item.json.choices[0].message.content }}"
+              "value": "={{ $('💰 Agent Finances').item?.json?.choices?.[0]?.message?.content || 'Données financières non disponibles' }}"
             },
             {
               "id": "juridique",
               "name": "juridique",
               "type": "string",
-              "value": "={{ $('⚖️ Agent Juridique').item.json.choices[0].message.content }}"
+              "value": "={{ $('⚖️ Agent Juridique').item?.json?.choices?.[0]?.message?.content || 'Données juridiques non disponibles' }}"
             },
             {
               "id": "socio_economique",
               "name": "socio_economique",
               "type": "string",
-              "value": "={{ $('🏘️ Agent Socio-Économique').item.json.choices[0].message.content }}"
+              "value": "={{ $('🏘️ Agent Socio-Économique').item?.json?.choices?.[0]?.message?.content || 'Données socio-économiques non disponibles' }}"
             },
             {
               "id": "ville",
@@ -277,7 +277,7 @@
         "options": {
           "responseFormat": "json_object",
           "temperature": 0.1
-        }
+        } 
       },
       "id": "07c23a83-c782-4de9-b639-733f3f61d5b6",
       "name": "🤖 GPT Synthèse",
@@ -297,7 +297,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('🔧 Configuration des Prompts').item.json.prompt_synthese.replace('{{ $json.ville_nom }}', $json.ville) }}\n\n## Données collectées :\n\n### Actualité :\n{{ $json.actualite }}\n\n### Finances :\n{{ $json.finances }}\n\n### Juridique :\n{{ $json.juridique }}\n\n### Socio-économique :\n{{ $json.socio_economique }}\n\n---\n\nCrée un dossier municipal structuré en format JSON avec cette structure exacte :\n\n{\n  \"dossier\": {\n    \"ville\": \"nom de la ville\",\n    \"date_creation\": \"date actuelle\",\n    \"resume_executif\": \"résumé en 2-3 phrases\",\n    \"sections\": {\n      \"presentation_commune\": {\n        \"titre\": \"Présentation de la commune\",\n        \"contenu\": \"description détaillée\",\n        \"points_cles\": [\"point1\", \"point2\", \"point3\"]\n      },\n      \"enjeux_principaux\": {\n        \"titre\": \"Enjeux principaux\",\n        \"contenu\": \"analyse des enjeux\",\n        \"points_cles\": [\"enjeu1\", \"enjeu2\", \"enjeu3\"]\n      },\n      \"defis_relever\": {\n        \"titre\": \"Défis à relever\",\n        \"contenu\": \"identification des défis\",\n        \"points_cles\": [\"defi1\", \"defi2\", \"defi3\"]\n      },\n      \"opportunites\": {\n        \"titre\": \"Opportunités de développement\",\n        \"contenu\": \"analyse des opportunités\",\n        \"points_cles\": [\"opportunite1\", \"opportunite2\", \"opportunite3\"]\n      },\n      \"recommandations\": {\n        \"titre\": \"Recommandations stratégiques\",\n        \"contenu\": \"stratégies pour la campagne\",\n        \"points_cles\": [\"recommandation1\", \"recommandation2\", \"recommandation3\"]\n      }\n    },\n    \"sources\": [\"source1\", \"source2\", \"source3\"]\n  }\n}\n\nRéponds uniquement avec le JSON, sans texte d'explication."
+        "text": "=Créé un dossier municipal complet pour un candidat aux élections municipales 2026 de {{ $json.ville }}. Synthétise les informations d'actualité, financières, juridiques et socio-économiques. Structure le contenu avec des sections claires : Présentation de la commune, Enjeux principaux, Défis à relever, Opportunités de développement, et Recommandations stratégiques pour la campagne.\n\n## Données collectées :\n\n### Actualité :\n{{ $json.actualite }}\n\n### Finances :\n{{ $json.finances }}\n\n### Juridique :\n{{ $json.juridique }}\n\n### Socio-économique :\n{{ $json.socio_economique }}\n\n---\n\nCrée un dossier municipal structuré en format JSON avec cette structure exacte :\n\n{\n  \"dossier\": {\n    \"ville\": \"nom de la ville\",\n    \"date_creation\": \"date actuelle\",\n    \"resume_executif\": \"résumé en 2-3 phrases\",\n    \"sections\": {\n      \"presentation_commune\": {\n        \"titre\": \"Présentation de la commune\",\n        \"contenu\": \"description détaillée\",\n        \"points_cles\": [\"point1\", \"point2\", \"point3\"]\n      },\n      \"enjeux_principaux\": {\n        \"titre\": \"Enjeux principaux\",\n        \"contenu\": \"analyse des enjeux\",\n        \"points_cles\": [\"enjeu1\", \"enjeu2\", \"enjeu3\"]\n      },\n      \"defis_relever\": {\n        \"titre\": \"Défis à relever\",\n        \"contenu\": \"identification des défis\",\n        \"points_cles\": [\"defi1\", \"defi2\", \"defi3\"]\n      },\n      \"opportunites\": {\n        \"titre\": \"Opportunités de développement\",\n        \"contenu\": \"analyse des opportunités\",\n        \"points_cles\": [\"opportunite1\", \"opportunite2\", \"opportunite3\"]\n      },\n      \"recommandations\": {\n        \"titre\": \"Recommandations stratégiques\",\n        \"contenu\": \"stratégies pour la campagne\",\n        \"points_cles\": [\"recommandation1\", \"recommandation2\", \"recommandation3\"]\n      }\n    },\n    \"sources\": [\"source1\", \"source2\", \"source3\"]\n  }\n}\n\nRéponds uniquement avec le JSON, sans texte d'explication."
       },
       "id": "b4a1da38-40cb-4b09-9cda-f43c57605bb5",
       "name": "📋 Création Dossier Municipal",
@@ -471,21 +471,6 @@
             "node": "📰 Agent Actualité",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "💰 Agent Finances",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "⚖️ Agent Juridique",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "🏘️ Agent Socio-Économique",
-            "type": "main",
-            "index": 0
           }
         ],
         [
@@ -501,7 +486,7 @@
       "main": [
         [
           {
-            "node": "📊 Consolidation Données",
+            "node": "💰 Agent Finances",
             "type": "main",
             "index": 0
           }
@@ -512,7 +497,7 @@
       "main": [
         [
           {
-            "node": "📊 Consolidation Données",
+            "node": "⚖️ Agent Juridique",
             "type": "main",
             "index": 0
           }
@@ -523,7 +508,7 @@
       "main": [
         [
           {
-            "node": "📊 Consolidation Données",
+            "node": "🏘️ Agent Socio-Économique",
             "type": "main",
             "index": 0
           }
@@ -541,6 +526,7 @@
         ]
       ]
     },
+
     "📊 Consolidation Données": {
       "main": [
         [
