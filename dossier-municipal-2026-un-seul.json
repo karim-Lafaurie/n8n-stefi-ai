@@ -1,0 +1,452 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "prompt_global",
+                "name": "prompt_global",
+                "type": "string",
+                "value": "Réalise une analyse municipale complète de {{ $json.ville_nom }} en France pour un dossier électoral municipal 2026. Couvre TOUS ces aspects : 1) ACTUALITÉ RÉCENTE (12 derniers mois) : événements, projets municipaux, développements économiques, problèmes sociaux, décisions du conseil municipal. 2) SITUATION FINANCIÈRE : budget municipal, dépenses principales, recettes, endettement, investissements récents, projets financés, perspectives budgétaires. 3) ASPECTS JURIDIQUES : délibérations municipales récentes, contentieux en cours, décisions administratives importantes, projets d'urbanisme, réglementations locales. 4) SOCIO-ÉCONOMIQUE : démographie, chômage, entreprises locales, commerces, immobilier, éducation, santé, transports, culture, équipements publics. Structure ta réponse avec ces 4 sections distinctes et détaillées."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e1d14abe-3562-4e01-8c31-fc004748bd3c",
+        "name": "🔧 Configuration du Prompt",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          -1120,
+          20
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "path": "dossier-municipal",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "632925de-baff-4352-aa81-722914f6ebdd",
+        "name": "📥 Webhook Entrée",
+        "type": "n8n-nodes-base.webhook",
+        "position": [
+          -1340,
+          20
+        ],
+        "webhookId": "dossier-municipal-2026",
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ville_nom",
+                "name": "ville_nom",
+                "type": "string",
+                "value": "={{ $('📥 Webhook Entrée').item.json.query?.ville || $('📥 Webhook Entrée').item.json.ville || $('📥 Webhook Entrée').item.json.query?.topic || $('📥 Webhook Entrée').item.json.topic || '' }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ecdc34ef-78b5-4468-a991-eb00e9bf90e7",
+        "name": "🏛️ Extraction Nom Ville",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          -900,
+          20
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "combinator": "and",
+            "conditions": [
+              {
+                "id": "ville-existe",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                },
+                "leftValue": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}",
+                "rightValue": ""
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "799524ae-26d2-4ac2-b448-dd61f6a8a69c",
+        "name": "✅ Vérification Ville",
+        "type": "n8n-nodes-base.if",
+        "position": [
+          -680,
+          20
+        ],
+        "typeVersion": 2.2
+      },
+      {
+        "parameters": {
+          "model": "sonar-deep-research",
+          "messages": {
+            "messagesUi": [
+              {
+                "role": "system",
+                "content": "Tu es un expert en analyse municipale française. Réponds en français avec des informations précises et vérifiables."
+              },
+              {
+                "content": "=Réalise une analyse municipale complète de {{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }} en France pour un dossier électoral municipal 2026. Couvre ces aspects : 1) ACTUALITÉ RÉCENTE (12 derniers mois), 2) SITUATION FINANCIÈRE, 3) ASPECTS JURIDIQUES, 4) SOCIO-ÉCONOMIQUE. Structure ta réponse avec ces 4 sections distinctes et détaillées."
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "id": "c557654e-16fd-4c7b-9457-232e892dbcf3",
+        "name": "🔍 Agent Perplexity Global",
+        "type": "@watzon/n8n-nodes-perplexity.perplexity",
+        "position": [
+          -460,
+          20
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "perplexityApi": {
+            "id": "l9xmENBp3vpHTyQe",
+            "name": "Perplexity account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "analyse_complete",
+                "name": "analyse_complete",
+                "type": "string",
+                "value": "={{ $('🔍 Agent Perplexity Global').item?.json?.content || 'Données d\\'analyse non disponibles' }}"
+              },
+              {
+                "id": "ville",
+                "name": "ville",
+                "type": "string",
+                "value": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "095fd73f-0f94-40c2-88a6-4167258bd885",
+        "name": "📊 Consolidation Données",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          -220,
+          20
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Créé un dossier municipal complet pour un candidat aux élections municipales 2026 de {{ $json.ville }}. Synthétise les informations fournies et structure le contenu avec des sections claires : Présentation de la commune, Enjeux principaux, Défis à relever, Opportunités de développement, et Recommandations stratégiques pour la campagne.\n\n## Analyse complète :\n{{ $json.analyse_complete }}\n\n---\n\nCrée un dossier municipal structuré en format JSON avec cette structure exacte :\n\n{\n  \"dossier\": {\n    \"ville\": \"nom de la ville\",\n    \"date_creation\": \"date actuelle\",\n    \"resume_executif\": \"résumé en 2-3 phrases\",\n    \"sections\": {\n      \"presentation_commune\": {\n        \"titre\": \"Présentation de la commune\",\n        \"contenu\": \"description détaillée\",\n        \"points_cles\": [\"point1\", \"point2\", \"point3\"]\n      },\n      \"enjeux_principaux\": {\n        \"titre\": \"Enjeux principaux\",\n        \"contenu\": \"analyse des enjeux\",\n        \"points_cles\": [\"enjeu1\", \"enjeu2\", \"enjeu3\"]\n      },\n      \"defis_relever\": {\n        \"titre\": \"Défis à relever\",\n        \"contenu\": \"identification des défis\",\n        \"points_cles\": [\"defi1\", \"defi2\", \"defi3\"]\n      },\n      \"opportunites\": {\n        \"titre\": \"Opportunités de développement\",\n        \"contenu\": \"analyse des opportunités\",\n        \"points_cles\": [\"opportunite1\", \"opportunite2\", \"opportunite3\"]\n      },\n      \"recommandations\": {\n        \"titre\": \"Recommandations stratégiques\",\n        \"contenu\": \"stratégies pour la campagne\",\n        \"points_cles\": [\"recommandation1\", \"recommandation2\", \"recommandation3\"]\n      }\n    },\n    \"sources\": [\"source1\", \"source2\", \"source3\"]\n  }\n}\n\nRéponds uniquement avec le JSON, sans texte d'explication."
+        },
+        "id": "fa0c0c39-1776-463e-a482-d8f553dd64d3",
+        "name": "📋 Création Dossier Municipal",
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "position": [
+          60,
+          20
+        ],
+        "typeVersion": 1.4
+      },
+      {
+        "parameters": {
+          "model": "gpt-4o-mini-2024-07-18",
+          "options": {
+            "responseFormat": "json_object",
+            "temperature": 0.1
+          }
+        },
+        "id": "544104f1-0c33-42fb-81fb-5054b5a8fe36",
+        "name": "🤖 GPT Dossier",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "position": [
+          60,
+          200
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "openAiApi": {
+            "id": "x5omHDQyKcMdm5sj",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "gpt-4o-mini-2024-07-18",
+          "options": {
+            "responseFormat": "text",
+            "temperature": 0.1
+          }
+        },
+        "id": "9b8f468f-bb0b-4cb1-acdf-d311fc2063fc",
+        "name": "🌐 GPT HTML",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "position": [
+          380,
+          200
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "openAiApi": {
+            "id": "x5omHDQyKcMdm5sj",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Crée un document HTML complet et moderne pour ce dossier municipal. Utilise TailwindCSS pour un design professionnel et responsive.\n\nStructure :\n- Header avec le nom de la ville et date\n- Navigation par sections\n- Contenu organisé avec des cartes TailwindCSS\n- Code couleur : bleu pour les titres, vert pour les opportunités, orange pour les défis\n- Footer avec les sources\n\nDonnées du dossier :\n{{ $json.text }}\n\nRequirements :\n- Document HTML complet avec doctype\n- Utilise TailwindCSS via CDN\n- Design responsive et moderne\n- Navigation fluide entre sections\n- Formatage professionnel pour un candidat\n- Langue française exclusivement\n- Une seule ligne de HTML (sans retours à la ligne)\n\nRéponds uniquement avec le code HTML, sans explications."
+        },
+        "id": "992b0cd1-6b51-4a2c-9c10-b4f1470567ff",
+        "name": "🎨 Génération HTML",
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "position": [
+          380,
+          20
+        ],
+        "typeVersion": 1.4
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.text }}",
+          "options": {
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "text/html; charset=utf-8"
+                }
+              ]
+            }
+          }
+        },
+        "id": "3d4b2205-2855-46ff-aa29-dc8ebb3de743",
+        "name": "📤 Réponse Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "position": [
+          700,
+          20
+        ],
+        "typeVersion": 1.1
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "erreur",
+                "name": "erreur",
+                "type": "string",
+                "value": "Erreur : Nom de ville manquant. Veuillez spécifier le paramètre 'ville' ou 'topic' dans votre requête. Exemples: ?ville=Paris ou ?topic=Lyon"
+              },
+              {
+                "id": "debug_data",
+                "name": "debug_data",
+                "type": "object",
+                "value": "={{ $('📥 Webhook Entrée').item.json }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "211dbaa7-577e-440e-9617-f71bcdf2b20e",
+        "name": "❌ Erreur Ville Manquante",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          -680,
+          200
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ { \"erreur\": $json.erreur, \"debug\": $json.debug_data, \"aide\": \"Utilisez les paramètres: ?ville=NomVille ou ?topic=NomVille\" } }}",
+          "options": {}
+        },
+        "id": "3ac99961-7174-4dff-921e-2961892f7fca",
+        "name": "📤 Réponse Erreur",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "position": [
+          -480,
+          560
+        ],
+        "typeVersion": 1.1
+      },
+      {
+        "parameters": {
+          "content": "## 🏛️ WORKFLOW DOSSIER MUNICIPAL 2026 - VERSION SIMPLIFIÉE\n\nCe workflow génère un dossier complet pour un candidat aux élections municipales.\n\n### Utilisation :\n- URL : /dossier-municipal?ville=NOM_VILLE\n- Exemple : /dossier-municipal?ville=Lyon\n\n### Architecture simplifiée :\n- 🔍 Un seul agent Perplexity global\n- 📊 Consolidation directe\n- 🎨 Génération HTML finale\n\n### Prompt global :\nAnalyse complète couvrant actualité, finances, juridique et socio-économique",
+          "height": 400,
+          "width": 600,
+          "color": 3
+        },
+        "id": "2d617471-5b3e-4835-b3c0-7ca6dd3dc1c8",
+        "name": "📖 Documentation",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1340,
+          -360
+        ],
+        "typeVersion": 1
+      }
+    ],
+    "connections": {
+      "🔧 Configuration du Prompt": {
+        "main": [
+          [
+            {
+              "node": "✅ Vérification Ville",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📥 Webhook Entrée": {
+        "main": [
+          [
+            {
+              "node": "🏛️ Extraction Nom Ville",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🏛️ Extraction Nom Ville": {
+        "main": [
+          [
+            {
+              "node": "🔧 Configuration du Prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "✅ Vérification Ville": {
+        "main": [
+          [
+            {
+              "node": "🔍 Agent Perplexity Global",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "❌ Erreur Ville Manquante",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🔍 Agent Perplexity Global": {
+        "main": [
+          [
+            {
+              "node": "📊 Consolidation Données",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📊 Consolidation Données": {
+        "main": [
+          [
+            {
+              "node": "📋 Création Dossier Municipal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "📋 Création Dossier Municipal": {
+        "main": [
+          [
+            {
+              "node": "🎨 Génération HTML",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🤖 GPT Dossier": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "📋 Création Dossier Municipal",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🌐 GPT HTML": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "🎨 Génération HTML",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "🎨 Génération HTML": {
+        "main": [
+          [
+            {
+              "node": "📤 Réponse Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "❌ Erreur Ville Manquante": {
+        "main": [
+          [
+            {
+              "node": "📤 Réponse Erreur",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "instanceId": "a89ff51014f84c47ef4d4895b220e462755d019d580bee747c11ae9b6bc115eb"
+    }
+}
