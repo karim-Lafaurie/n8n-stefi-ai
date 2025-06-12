@@ -1,37 +1,71 @@
 {
   "nodes": [
     {
+      "parameters": {},
+      "id": "manual-trigger-123",
+      "name": "🚀 Déclencheur Manuel",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -1260,
+        -300
+      ],
+      "typeVersion": 1
+    },
+    {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "prompt_global",
-              "name": "prompt_global",
+              "id": "ville_input",
+              "name": "ville",
               "type": "string",
-              "value": "Réalise une analyse municipale complète de {{ $json.ville_nom }} en France pour un dossier électoral municipal 2026. Couvre TOUS ces aspects : 1) ACTUALITÉ RÉCENTE (12 derniers mois) : événements, projets municipaux, développements économiques, problèmes sociaux, décisions du conseil municipal. 2) SITUATION FINANCIÈRE : budget municipal, dépenses principales, recettes, endettement, investissements récents, projets financés, perspectives budgétaires. 3) ASPECTS JURIDIQUES : délibérations municipales récentes, contentieux en cours, décisions administratives importantes, projets d'urbanisme, réglementations locales. 4) SOCIO-ÉCONOMIQUE : démographie, chômage, entreprises locales, commerces, immobilier, éducation, santé, transports, culture, équipements publics. Structure ta réponse avec ces 4 sections distinctes et détaillées."
+              "value": "Lyon"
             },
+            {
+              "id": "cp_input", 
+              "name": "cp",
+              "type": "string",
+              "value": "69000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "manual-input-123",
+      "name": "📝 Saisie Manuelle",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1040,
+        -300
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
             {
               "id": "ea9f56dd-4783-4eaa-80ea-fe2bca6a7ad3",
               "name": "prompt_perplexity_1",
-              "value": "=Réalise une analyse stratégique et exhaustive de la commune de {{ $json.ville_nom }} code postal {{ $json.cp }} (France), à destination d'un candidat aux élections municipales de 2026.  Structure ton analyse en 8 sections :  1. FICHE COMMUNALE & GOUVERNANCE : - Population, densité, maire actuel, durée du mandat - Intercommunalité, compétences transférées - Conseil municipal, commissions, délibérations récentes  2. ACTUALITÉ LOCALE & TRANSFORMATIONS : - Événements des 12 derniers mois - Projets d'aménagement, tensions, changements - Perception publique et relais médiatiques  3. FINANCES & FISCALITÉ : - Budget, CAF, taux d'endettement, marges de manœuvre - Fiscalité locale (foncière, habitation résiduelle) - Subventions, contractualisation avec l'État ou la région  4. URBANISME & JURIDIQUE : - PLU/PLUi, zonages, contentieux en cours - Contraintes patrimoniales ou environnementales  5. PROFIL SOCIO-ÉCONOMIQUE : - Données INSEE : démographie, emploi, revenus, logement - Évolution récente, dynamique territoriale  6. DONNÉES ÉLECTORALES : - Résultats municipales 2020, autres élections récentes - Abstention, tendances politiques locales  7. VIE LOCALE & PATRIMOINE : - Associations, équipements, commerces, attractivité - Cadre de vie, patrimoine bâti et naturel  8. ENJEUX STRATÉGIQUES 2026 : - Défis prioritaires, axes de campagne potentiels  Consignes : - Style professionnel, synthétique (max 5 pages) - Utiliser des données chiffrées, sources officielles (INSEE, Legifrance, data.gouv.fr) - L'analyse doit être exploitable politiquement dans le cadre d'une campagne.",
+              "value": "=Réalise une analyse stratégique et exhaustive de la commune de {{ $('🔗 Source Données').item.json.ville_nom }} code postal {{ $('🔗 Source Données').item.json.code_postal }} (France), à destination d'un candidat aux élections municipales de 2026.  Structure ton analyse en 8 sections :  1. FICHE COMMUNALE & GOUVERNANCE : - Population, densité, maire actuel, durée du mandat - Intercommunalité, compétences transférées - Conseil municipal, commissions, délibérations récentes  2. ACTUALITÉ LOCALE & TRANSFORMATIONS : - Événements des 12 derniers mois - Projets d'aménagement, tensions, changements - Perception publique et relais médiatiques  3. FINANCES & FISCALITÉ : - Budget, CAF, taux d'endettement, marges de manœuvre - Fiscalité locale (foncière, habitation résiduelle) - Subventions, contractualisation avec l'État ou la région  4. URBANISME & JURIDIQUE : - PLU/PLUi, zonages, contentieux en cours - Contraintes patrimoniales ou environnementales  5. PROFIL SOCIO-ÉCONOMIQUE : - Données INSEE : démographie, emploi, revenus, logement - Évolution récente, dynamique territoriale  6. DONNÉES ÉLECTORALES : - Résultats municipales 2020, autres élections récentes - Abstention, tendances politiques locales  7. VIE LOCALE & PATRIMOINE : - Associations, équipements, commerces, attractivité - Cadre de vie, patrimoine bâti et naturel  8. ENJEUX STRATÉGIQUES 2026 : - Défis prioritaires, axes de campagne potentiels  Consignes : - Style professionnel, synthétique (max 5 pages) - Utiliser des données chiffrées, sources officielles (INSEE, Legifrance, data.gouv.fr) - L'analyse doit être exploitable politiquement dans le cadre d'une campagne.",
               "type": "string"
             },
             {
               "id": "47f8cb10-457d-4490-8004-f8150017d200",
               "name": "prompt_perplexity_test_1",
-              "value": "Donne moi des informations de population et le maire actuel pour la commune de {{ $json.ville_nom }} code postal {{ $json.cp }} (France)",
+              "value": "=Donne moi des informations de population et le maire actuel pour la commune de {{ $('🔗 Source Données').item.json.ville_nom }} code postal {{ $('🔗 Source Données').item.json.code_postal }} (France)",
               "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "e7f1734d-7ec5-4eb1-afd1-db9cea0cdd53",
+      "id": "e80efcb8-b446-4cab-b8af-b73ab0758dcf",
       "name": "🔧 Configuration du Prompt",
       "type": "n8n-nodes-base.set",
       "position": [
-        -1100,
-        -40
+        -1040,
+        -100
       ],
       "typeVersion": 3.4
     },
@@ -41,12 +75,12 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "7ed8322c-96e9-4c37-8aac-854b5426a290",
+      "id": "0800821b-bb9e-42e4-bfb3-97111ba3d6db",
       "name": "📥 Webhook Entrée",
       "type": "n8n-nodes-base.webhook",
       "position": [
-        -1320,
-        -40
+        -1260,
+        -100
       ],
       "webhookId": "dossier-municipal-2026",
       "typeVersion": 2
@@ -59,24 +93,30 @@
               "id": "ville_nom",
               "name": "ville_nom",
               "type": "string",
-              "value": "={{ $json.query.ville }}"
+              "value": "={{ $json.query?.ville || $json.ville || 'Ville non spécifiée' }}"
             },
             {
               "id": "ef819d74-93d3-4ec2-a7a3-2e3e6a1136fa",
               "name": "code_postal",
-              "value": "={{ $json.query.cp }}",
+              "value": "={{ $json.query?.cp || $json.cp || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "source_trigger",
+              "name": "source_trigger",
+              "value": "={{ $json.query ? 'webhook' : 'manual' }}",
               "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "8f7c16e2-f38c-42bc-90e8-0aea4b7a4d29",
-      "name": "🏛️ Extraction Nom Ville",
+      "id": "baaa043e-01d5-44e9-8510-810cec113b58",
+      "name": "🔗 Source Données",
       "type": "n8n-nodes-base.set",
       "position": [
-        -880,
-        -40
+        -820,
+        -100
       ],
       "typeVersion": 3.4
     },
@@ -98,66 +138,29 @@
                 "operation": "notEmpty",
                 "singleValue": true
               },
-              "leftValue": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}",
+              "leftValue": "={{ $('🔗 Source Données').item.json.ville_nom }}",
               "rightValue": ""
             }
           ]
         },
         "options": {}
       },
-      "id": "4bbcdd7c-39ae-469c-964e-58079dff091b",
+      "id": "648ac301-dc2f-4ac6-aed5-ca48fdb423bf",
       "name": "✅ Vérification Ville",
       "type": "n8n-nodes-base.if",
       "position": [
-        -640,
-        -40
+        -580,
+        -100
       ],
       "typeVersion": 2.2
-    },
-    {
-      "parameters": {
-        "model": "sonar-pro",
-        "messages": {
-          "messagesUi": [
-            {
-              "role": "system",
-              "content": "Tu es un expert en analyse municipale et en intelligence territoriale. Réponds en français avec des informations précises et vérifiables."
-            },
-            {
-              "content": "={{ $json.mode === 'test' ? $json.prompt_perplexity_test_1 : $json.prompt_perplexity_1 }}"
-            }
-          ]
-        },
-        "additionalFields": {}
-      },
-      "id": "72dd600b-d200-4b67-8832-4eb494b2629e",
-      "name": "🔍 Agent Perplexity Global",
-      "type": "@watzon/n8n-nodes-perplexity.perplexity",
-      "position": [
-        -380,
-        -40
-      ],
-      "typeVersion": 1,
-      "credentials": {
-        "perplexityApi": {
-          "id": "l9xmENBp3vpHTyQe",
-          "name": "Perplexity account"
-        }
-      }
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "ville",
-              "name": "ville",
-              "type": "string",
-              "value": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}"
-            },
-            {
               "id": "analyse_complete",
-              "name": "analyse_plerplexity_1",
+              "name": "content_perplexity_1",
               "type": "string",
               "value": "={{ $json.choices[0].message.content || 'Données d\\'analyse non disponibles' }}"
             },
@@ -166,98 +169,44 @@
               "name": "search_results_plerplexity_1",
               "value": "={{ $json.search_results }}",
               "type": "array"
+            },
+            {
+              "id": "600c8ac0-4803-40fa-860a-84354261c977",
+              "name": "related_questions",
+              "value": "={{ $json.related_questions }}",
+              "type": "string"
             }
           ]
         },
         "options": {}
       },
-      "id": "c1a2ab15-4008-4faf-93e4-f609dd21643b",
+      "id": "61153a4f-6f97-4014-9b5f-a6e2107e3ea6",
       "name": "📊 Consolidation Données",
       "type": "n8n-nodes-base.set",
       "position": [
-        -120,
-        -40
+        -60,
+        -100
       ],
       "typeVersion": 3.4
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Créé un dossier municipal complet pour un candidat aux élections municipales 2026 de {{ $json.ville }}. Synthétise les informations fournies et structure le contenu avec des sections claires : Présentation de la commune, Enjeux principaux, Défis à relever, Opportunités de développement, et Recommandations stratégiques pour la campagne.\n\n## Analyse complète :\n{{ $json.analyse_complete }}\n\n---\n\nCrée un dossier municipal structuré en format JSON avec cette structure exacte :\n\n{\n  \"dossier\": {\n    \"ville\": \"nom de la ville\",\n    \"date_creation\": \"date actuelle\",\n    \"resume_executif\": \"résumé en 2-3 phrases\",\n    \"sections\": {\n      \"presentation_commune\": {\n        \"titre\": \"Présentation de la commune\",\n        \"contenu\": \"description détaillée\",\n        \"points_cles\": [\"point1\", \"point2\", \"point3\"]\n      },\n      \"enjeux_principaux\": {\n        \"titre\": \"Enjeux principaux\",\n        \"contenu\": \"analyse des enjeux\",\n        \"points_cles\": [\"enjeu1\", \"enjeu2\", \"enjeu3\"]\n      },\n      \"defis_relever\": {\n        \"titre\": \"Défis à relever\",\n        \"contenu\": \"identification des défis\",\n        \"points_cles\": [\"defi1\", \"defi2\", \"defi3\"]\n      },\n      \"opportunites\": {\n        \"titre\": \"Opportunités de développement\",\n        \"contenu\": \"analyse des opportunités\",\n        \"points_cles\": [\"opportunite1\", \"opportunite2\", \"opportunite3\"]\n      },\n      \"recommandations\": {\n        \"titre\": \"Recommandations stratégiques\",\n        \"contenu\": \"stratégies pour la campagne\",\n        \"points_cles\": [\"recommandation1\", \"recommandation2\", \"recommandation3\"]\n      }\n    },\n    \"sources\": [\"source1\", \"source2\", \"source3\"]\n  }\n}\n\nRéponds uniquement avec le JSON, sans texte d'explication."
+        "text": "=\nCréez un document HTML professionnel et visuellement attrayant pour une analyse stratégique municipale en utilisant les données fournies ci-dessous.\n\n## Données du dossier :\n**Ville :** {{ $('🔗 Source Données').item.json.ville_nom }}\n**Code postal :** {{ $('🔗 Source Données').item.json.code_postal }}\n**Source :** {{ $('🔗 Source Données').item.json.source_trigger }}\n**Contenu de l'analyse :** {{ $json.content_perplexity_1 }}\n\n**Sources :** {{ JSON.stringify($json.search_results_plerplexity_1, null, 2) }}\n\n## Instructions de formatage :\n\n1. **Structure HTML moderne** avec design responsive et professionnel\n2. **En-tête attractif** avec le nom de la ville et \"Analyse stratégique - Élections municipales 2026\"\n3. **Système de couleurs cohérent** : dégradés bleu/violet pour l'en-tête, codes couleur pour différencier les sections\n4. **Mise en page avancée** avec :\n   - Cartes de données interactives pour les métriques clés\n   - Sections clairement délimitées avec indicateurs visuels\n   - Encadrés colorés pour les points stratégiques\n   - Effets de survol et transitions fluides\n\n5. **Traitement du contenu** :\n   - Convertir les références [1], [2], etc. en liens cliquables vers les sources\n   - Identifier et mettre en évidence les données chiffrées importantes dans des \"metric\" colorés\n   - Structurer le texte avec des sous-sections quand approprié\n   - Ajouter des cartes de données visuelles pour les statistiques principales\n\n6. **Section sources** :\n   - Créer une section séparée \"Sources et références\" en bas du document\n   - Lister toutes les sources avec numéros, titres et URLs cliquables\n   - Design distinct du contenu principal\n\n7. **Responsive design** adapté mobile/tablette avec typographie hiérarchisée\n\n8. **Style CSS intégré** reprenant le design moderne avec :\n   - Animations subtiles\n   - Dégradés et effets visuels\n   - Grille flexible pour les données\n   - Palette de couleurs professionnelle\n\n## Exigences techniques :\n- Document HTML complet et autonome\n- CSS intégré dans les balises `<style>`\n- Optimisé pour impression et partage\n- Accessibilité respectée (contrastes, structure sémantique)\n\n## Rendu attendu :\nUn document HTML professionnel prêt à être utilisé pour une présentation stratégique, avec une mise en forme visuelle moderne qui facilite la lecture et met en valeur les informations clés pour un candidat aux élections municipales.\nRéponds uniquement avec le code HTML, sans explications."
       },
-      "id": "1f9e7f37-e585-48bc-9bac-8668ba6b882f",
-      "name": "📋 Création Dossier Municipal",
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "position": [
-        420,
-        -40
-      ],
-      "typeVersion": 1.4
-    },
-    {
-      "parameters": {
-        "model": "gpt-4o-mini-2024-07-18",
-        "options": {
-          "responseFormat": "json_object",
-          "temperature": 0.1
-        }
-      },
-      "id": "b46df901-4678-4e86-8c21-1ba607abd259",
-      "name": "🤖 GPT Dossier",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "position": [
-        340,
-        280
-      ],
-      "typeVersion": 1,
-      "credentials": {
-        "openAiApi": {
-          "id": "x5omHDQyKcMdm5sj",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": "gpt-4o-mini-2024-07-18",
-        "options": {
-          "responseFormat": "text",
-          "temperature": 0.1
-        }
-      },
-      "id": "92738708-9e32-4b71-b9de-a6bf8a48c7a2",
-      "name": "🌐 GPT HTML",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "position": [
-        720,
-        240
-      ],
-      "typeVersion": 1,
-      "credentials": {
-        "openAiApi": {
-          "id": "x5omHDQyKcMdm5sj",
-          "name": "OpenAi account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=Crée un document HTML complet et moderne pour ce dossier municipal. Utilise TailwindCSS pour un design professionnel et responsive.\n\nStructure :\n- Header avec le nom de la ville et date\n- Navigation par sections\n- Contenu organisé avec des cartes TailwindCSS\n- Code couleur : bleu pour les titres, vert pour les opportunités, orange pour les défis\n- Footer avec les sources\n\nDonnées du dossier :\n{{ $json.text }}\n\nRequirements :\n- Document HTML complet avec doctype\n- Utilise TailwindCSS via CDN\n- Design responsive et moderne\n- Navigation fluide entre sections\n- Formatage professionnel pour un candidat\n- Langue française exclusivement\n- Une seule ligne de HTML (sans retours à la ligne)\n\nRéponds uniquement avec le code HTML, sans explications."
-      },
-      "id": "c0bd6cfa-422a-4da0-b782-43c165a4026f",
+      "id": "a11a330b-27f4-48bc-8598-975cc7c474e1",
       "name": "🎨 Génération HTML",
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "position": [
-        860,
-        -40
+        240,
+        -100
       ],
       "typeVersion": 1.4
     },
     {
       "parameters": {
-        "respondWith": "text",
-        "responseBody": "={{ $json.text }}",
+        "respondWith": "={{ $json.output || $json.text || $json.content || 'Erreur de génération HTML' }}",
+        "responseBody": "",
         "options": {
           "responseHeaders": {
             "entries": [
@@ -269,12 +218,12 @@
           }
         }
       },
-      "id": "708cf986-c214-4e14-990d-c6dc0d96227b",
+      "id": "a4df0488-66ab-4ec7-bf7b-025ba4754f50",
       "name": "📤 Réponse Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [
-        1260,
-        -40
+        680,
+        -100
       ],
       "typeVersion": 1.1
     },
@@ -298,12 +247,12 @@
         },
         "options": {}
       },
-      "id": "61371fa4-875a-49bf-9dee-f8d28b57d003",
+      "id": "03bf1c0c-126f-4172-a090-7402513ecc53",
       "name": "❌ Erreur Ville Manquante",
       "type": "n8n-nodes-base.set",
       "position": [
-        -400,
-        420
+        -340,
+        360
       ],
       "typeVersion": 3.4
     },
@@ -313,65 +262,214 @@
         "responseBody": "={{ { \"erreur\": $json.erreur, \"debug\": $json.debug_data, \"aide\": \"Utilisez les paramètres: ?ville=NomVille ou ?topic=NomVille\" } }}",
         "options": {}
       },
-      "id": "18194104-17e7-437b-ac90-87616315e2a2",
+      "id": "11ce4240-8079-410e-ba0b-331ccf19fbcf",
       "name": "📤 Réponse Erreur",
       "type": "n8n-nodes-base.respondToWebhook",
       "position": [
-        -120,
-        420
+        -60,
+        360
       ],
       "typeVersion": 1.1
     },
     {
       "parameters": {
-        "content": "## 🏛️ WORKFLOW DOSSIER MUNICIPAL 2026 - VERSION SIMPLIFIÉE\n\nCe workflow génère un dossier complet pour un candidat aux élections municipales.\n\n### Utilisation :\n- URL : /dossier-municipal?ville=NOM_VILLE&cp=CODEPOSTAL\n- Exemple : /dossier-municipal?ville=Lyon\n\n### Architecture simplifiée :\n- 🔍 Un seul agent Perplexity global\n- 📊 Consolidation directe\n- 🎨 Génération HTML finale\n\n### Prompt global :\nAnalyse complète couvrant actualité, finances, juridique et socio-économique",
+        "content": "## 🏛️ WORKFLOW DOSSIER MUNICIPAL 2026 - DOUBLE MODE\n\nCe workflow génère un dossier complet pour un candidat aux élections municipales.\n\n### 🚀 DEUX MODES D'UTILISATION :\n\n**1. Mode Manuel (n8n v1.97)**\n- Cliquez sur \"🚀 Déclencheur Manuel\"\n- Modifiez les valeurs dans \"📝 Saisie Manuelle\"\n- Changez 'Lyon' et '69000' par votre ville\n- Résultat dans \"📋 Sortie Manuel\"\n\n**2. Mode Webhook (API)**\n- URL : /dossier-municipal?ville=NOM_VILLE&cp=CODEPOSTAL\n- Exemple : /dossier-municipal?ville=Lyon\n- Retour HTML direct\n\n### Architecture :\n- 🔗 Source unifiée (Manuel + Webhook)\n- 🔍 Agent Perplexity global\n- 🎨 Génération HTML\n- 🔀 Routage automatique selon la source\n\n### Mode Manuel - Comment faire :\n**Option A (Recommandée):**\n1. Éditez \"📝 Saisie Manuelle\"\n2. Cliquez \"Test workflow\" (en haut à droite)\n\n**Option B (Bouton dédié):**\n1. Éditez \"📝 Saisie Manuelle\" \n2. Cliquez sur \"▶️ LANCER L'ANALYSE\"\n3. Cliquez \"Execute node\"",
         "height": 400,
         "width": 600,
         "color": 3
       },
-      "id": "e49e1dea-bdc8-4255-ba14-c9bc3ee07951",
+      "id": "9a29c40d-22c5-4d57-b5bc-f6800ba2c5c9",
       "name": "📖 Documentation",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1320,
-        -460
+        -1260,
+        -520
       ],
       "typeVersion": 1
     },
     {
       "parameters": {
+        "model": "sonar-pro",
         "messages": {
-          "messagesUi": [
+          "message": [
             {
-              "role": "system",
-              "content": "Tu es un expert en analyse municipale et en intelligence territoriale. Réponds en français avec des informations précises et vérifiables."
+              "content": "Tu es un expert en analyse municipale et en intelligence territoriale. Réponds en français avec des informations précises et vérifiables.",
+              "role": "system"
             },
             {
-              "content": "={{ $('🏛️ Extraction Nom Ville').item.json.ville_nom }}"
-            },
-            {}
+              "content": "={{ $execution.mode === 'test' ? $json.prompt_perplexity_test_1 : $json.prompt_perplexity_1 }}"
+            }
           ]
         },
-        "additionalFields": {}
+        "options": {
+          "maxTokens": "={{ $execution.mode === 'test' ? 4096 : 15000 }}",
+          "returnRelatedQuestions": true
+        },
+        "requestOptions": {}
       },
-      "type": "@watzon/n8n-nodes-perplexity.perplexity",
+      "type": "n8n-nodes-base.perplexity",
       "typeVersion": 1,
       "position": [
-        -120,
-        220
+        -300,
+        -100
       ],
-      "id": "4228592c-9773-44ad-a549-ae9bf2a84ef4",
-      "name": "Perplexity - Données filtrées",
-      "notesInFlow": false,
+      "id": "a2abf83e-b2ea-4782-8c67-eca4f80e6534",
+      "name": "Perplexity",
       "credentials": {
         "perplexityApi": {
           "id": "l9xmENBp3vpHTyQe",
           "name": "Perplexity account"
         }
       }
+    },
+    {
+      "parameters": {
+        "model": "magistral-medium-latest",
+        "options": {
+          "maxTokens": 15000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        260,
+        120
+      ],
+      "id": "9e7b0e25-bff9-427d-a480-3f2260aee3ea",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "Jg2E4OnVZteXf4L9",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "source-check",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $('🔗 Source Données').item.json.source_trigger }}",
+              "rightValue": "manual"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "route-output-123",
+      "name": "🔀 Routage Sortie",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        520,
+        -100
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "html_content",
+              "name": "html_content",
+              "type": "string",
+              "value": "={{ $json.output || $json.text || $json.content || 'Erreur de génération HTML' }}"
+            },
+            {
+              "id": "ville_analysee",
+              "name": "ville_analysee",
+              "value": "={{ $('🔗 Source Données').item.json.ville_nom }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "manual-output-123",
+      "name": "📋 Sortie Manuel",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        680,
+        -300
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "info",
+              "name": "info",
+              "type": "string",
+              "value": "Cliquez sur ce nœud puis 'Execute node' pour lancer l'analyse"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "execute-button-123",
+      "name": "▶️ LANCER L'ANALYSE",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -820,
+        -300
+      ],
+      "typeVersion": 3.4
     }
   ],
   "connections": {
+    "🚀 Déclencheur Manuel": {
+      "main": [
+        [
+          {
+            "node": "📝 Saisie Manuelle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "📝 Saisie Manuelle": {
+      "main": [
+        [
+          {
+            "node": "▶️ LANCER L'ANALYSE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "▶️ LANCER L'ANALYSE": {
+      "main": [
+        [
+          {
+            "node": "🔗 Source Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "🔧 Configuration du Prompt": {
       "main": [
         [
@@ -387,14 +485,14 @@
       "main": [
         [
           {
-            "node": "🏛️ Extraction Nom Ville",
+            "node": "🔗 Source Données",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "🏛️ Extraction Nom Ville": {
+    "🔗 Source Données": {
       "main": [
         [
           {
@@ -409,7 +507,7 @@
       "main": [
         [
           {
-            "node": "🔍 Agent Perplexity Global",
+            "node": "Perplexity",
             "type": "main",
             "index": 0
           }
@@ -423,50 +521,12 @@
         ]
       ]
     },
-    "🔍 Agent Perplexity Global": {
-      "main": [
-        [
-          {
-            "node": "📊 Consolidation Données",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "📊 Consolidation Données": {
       "main": [
-        []
-      ]
-    },
-    "📋 Création Dossier Municipal": {
-      "main": [
         [
           {
             "node": "🎨 Génération HTML",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "🤖 GPT Dossier": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "📋 Création Dossier Municipal",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "🌐 GPT HTML": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "🎨 Génération HTML",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -474,6 +534,24 @@
     },
     "🎨 Génération HTML": {
       "main": [
+        [
+          {
+            "node": "🔀 Routage Sortie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "🔀 Routage Sortie": {
+      "main": [
+        [
+          {
+            "node": "📋 Sortie Manuel",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "📤 Réponse Webhook",
@@ -494,9 +572,26 @@
         ]
       ]
     },
-    "Perplexity - Données filtrées": {
+    "Perplexity": {
       "main": [
-        []
+        [
+          {
+            "node": "📊 Consolidation Données",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "🎨 Génération HTML",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     }
   },
